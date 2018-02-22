@@ -1,17 +1,14 @@
 require_relative 'item_repository'
 require_relative 'merchant_repository'
-require_relative 'invoice_repository'
+require 'pry'
 
 # Data Access Layer that interacts with repositories
 class SalesEngine
-  attr_accessor :items, 
-                :merchants, 
-                :invoices 
+  attr_accessor :items, :merchants
 
   def initialize(repositories)
-    @items = ItemRepository.new(repositories[:items])
-    @merchants = MerchantRepository.new(repositories[:merchants])
-    @invoices = InvoiceRepository.new(repositories[:invoices])
+    @items = ItemRepository.new(repositories[:items], self)
+    @merchants = MerchantRepository.new(repositories[:merchants], self)
   end
 
   def self.from_csv(repositories)
