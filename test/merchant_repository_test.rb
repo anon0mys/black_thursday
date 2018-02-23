@@ -1,6 +1,5 @@
 require './test/test_helper'
 require './lib/merchant_repository'
-require './test/fixtures/mock_sales_engine'
 
 # Tests merchant repository
 class MerchantRepositoryTest < Minitest::Test
