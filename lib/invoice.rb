@@ -35,6 +35,7 @@ class Invoice
   end
 
   def is_paid_in_full?
-    transactions.find { |trans| trans.result == 'success' }
+    success = transactions.find { |trans| trans.result == 'success' }
+    !success.nil?
   end
 end
