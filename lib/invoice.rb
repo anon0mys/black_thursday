@@ -33,4 +33,9 @@ class Invoice
   def transactions
     @parent.transactions(@id)
   end
+
+  def is_paid_in_full?
+    success = transactions.find { |trans| trans.result == 'success' }
+    !success.nil?
+  end
 end

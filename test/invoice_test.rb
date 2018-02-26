@@ -57,4 +57,38 @@ class InvoiceTest < Minitest::Test
   def test_it_asks_parent_for_transactions
     assert_instance_of Mocha::Mock, @invoice.transactions[0]
   end
+
+  def test_is_paid_in_full?
+    invoice_repo = stub(
+      transactions: [stub(result: 'fail'),
+                     stub(result: 'success')]
+    )
+    invoice = Invoice.new({
+                            id: 6,
+                            customer_id: 7,
+                            merchant_id: 8,
+                            status: 'pending',
+                            created_at: '1969-07-20 20:17:40 - 0600',
+                            updated_at: '1969-07-20 20:17:40 - 0600'
+                          }, invoice_repo)
+
+    assert invoice.is_paid_in_full?
+  end
+
+  def test_is_paid_in_full_false_when_no_success
+    invoice_repo = stub(
+      transactions: [stub(result: 'fail'),
+                     stub(result: 'fail')]
+    )
+    invoice = Invoice.new({
+                            id: 6,
+                            customer_id: 7,
+                            merchant_id: 8,
+                            status: 'pending',
+                            created_at: '1969-07-20 20:17:40 - 0600',
+                            updated_at: '1969-07-20 20:17:40 - 0600'
+                          }, invoice_repo)
+
+    refute invoice.is_paid_in_full?
+  end
 end
