@@ -10,7 +10,7 @@ class SalesEngineTest < Minitest::Test
       invoices: './data/sample_data/invoices.csv',
       transactions: './data/sample_data/transactions.csv',
       customers: './data/sample_data/customers.csv',
-      invoice_items: './data/sample_data/items.csv'
+      invoice_items: './data/sample_data/invoice_items.csv'
     )
   end
 
@@ -77,7 +77,7 @@ class SalesEngineTest < Minitest::Test
     invoice = @se.invoices.find_by_id(46)
 
     assert_instance_of Item, invoice.items[0]
-    assert_equal 46, invoice.items[0].name
+    assert_equal 'Garbage', invoice.items[0].name
   end
 
   def test_find_invoice_transactions
@@ -88,10 +88,10 @@ class SalesEngineTest < Minitest::Test
   end
 
   def test_find_customer_merchants
-    customer = @se.customers.find_by_id(3)
+    customer = @se.customers.find_by_id(2)
 
     assert_instance_of Merchant, customer.merchants[0]
-    assert_equal 3, customer.merchants[0].id
+    assert_equal 12334105, customer.merchants[0].id
   end
 
   def test_find_merchant_customers
