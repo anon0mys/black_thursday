@@ -26,8 +26,8 @@ class CustomerRepository
     end
   end
 
-  def merchants(id)
-    @sales_eng.find_customer_merchants(id)
+  def merchants(customer_id)
+    @sales_eng.find_customer_merchants(customer_id)
   end
 
   def inspect
