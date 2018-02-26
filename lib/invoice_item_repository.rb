@@ -20,7 +20,6 @@ class InvoiceItemRepository
   end
 
   def find_all_by_invoice_id(id)
-    # binding.pry
     @all.find_all { |obj| obj.invoice_id == id }
   end
 
