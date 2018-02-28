@@ -111,4 +111,31 @@ class SalesAnalystTest < Minitest::Test
     assert_instance_of Merchant, top_earners[0]
     assert_equal 123_341_05, top_earners[0].id
   end
+
+  def test_total_revenue_by_date
+    date = Time.parse('2009-02-07')
+    assert_equal BigDecimal.new(348_73) / 100, @sa.total_revenue_by_date(date)
+  end
+
+  def test_merchants_ranked_by_revenue
+    merchants = @sa.merchants_ranked_by_revenue
+
+    assert_instance_of Merchant, merchants.first
+    assert_equal 4, merchants.length
+  end
+
+  def test_merchants_with_pending_invoices
+    merchants = @sa.merchants_with_pending_invoices
+    assert_equal 3, merchants.length
+    assert_instance_of Merchant, merchants.first
+  end
+
+  def test_pending_invoices?
+    invoice_one = stub(is_paid_in_full?: true)
+    invoice_two = stub(is_paid_in_full?: false)
+    invoices = [invoice_one, invoice_two]
+
+    assert @sa.pending_invoices?(invoices)
+    refute @sa.pending_invoices?([invoice_one])
+  end
 end
