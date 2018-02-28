@@ -114,4 +114,11 @@ class SalesAnalystTest < Minitest::Test
   def test_revenue_by_merchant
     assert_equal 59.95, @sa.revenue_by_merchant(123_341_05)
   end
+
+  def test_top_revenue_earners
+    top_earners = @sa.top_revenue_earners
+
+    assert_instance_of Merchant, top_earners[0]
+    assert_equal 123_341_05, top_earners[0].id
+  end
 end

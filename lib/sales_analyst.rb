@@ -132,4 +132,13 @@ class SalesAnalyst
     totals = revenue_totals(invoice_items).values
     totals.reduce(&:+)
   end
+
+  def top_revenue_earners(length = 20)
+    totals = @se.merchants.all.reduce({}) do |result, merchant|
+      revenue = revenue_by_merchant(merchant.id)
+      result[merchant] = revenue unless revenue.nil?
+      result
+    end
+    totals.max_by(length) { |_merchant, revenue| revenue }.to_h.keys
+  end
 end
