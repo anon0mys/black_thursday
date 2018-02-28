@@ -96,7 +96,7 @@ class SalesAnalyst
     invoice_items = invoice_item_builder(invoices)
     quantities = quantities_sold(invoice_items)
     max_count = quantities.values.max
-    results = quantities.find_all { |_item, total| total == max_count}
+    results = quantities.find_all { |_item, total| total == max_count }
     results.to_h.keys.map do |result|
       @se.items.find_by_id(result.item_id)
     end
