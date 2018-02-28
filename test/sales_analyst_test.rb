@@ -101,16 +101,6 @@ class SalesAnalystTest < Minitest::Test
     assert_equal 1, merchants.length
   end
 
-  def test_check_invoices
-    invoice_one = stub(created_at: Time.parse('2018-02-01'))
-    invoice_two = stub(created_at: Time.parse('2018-01-01'))
-    invoices = [invoice_one, invoice_two]
-
-    assert @sa.check_invoices(invoices, 'February')
-    assert @sa.check_invoices(invoices, 'January')
-    refute @sa.check_invoices(invoices, 'December')
-  end
-
   def test_revenue_by_merchant
     assert_equal 59.95, @sa.revenue_by_merchant(123_341_05)
   end
