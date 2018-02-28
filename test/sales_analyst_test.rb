@@ -31,7 +31,7 @@ class SalesAnalystTest < Minitest::Test
 
   def test_merchants_with_high_item_count
     actual = @sa.merchants_with_high_item_count.first.name
-    assert_equal 'Shopin1901', actual
+    assert_equal 'MiniatureBikez', actual
   end
 
   def test_average_item_price_for_merchant
