@@ -48,6 +48,46 @@ class SalesAnalystTest < Minitest::Test
     golden_items = @sa.golden_items
     assert_equal 'Some stuff', golden_items.first.name
   end
+  
+  def test_it_finds_invoices_for_each_merchant
+    assert_equal [2.0, 0.0, 0.0, 1.0], @sa.invoices_for_each_merchant
+  end
+
+  def test_average_invoices_per_merchant
+    actual = @sa.average_invoices_per_merchant
+    assert_equal 0.75, actual
+  end
+
+  def test_average_invoices_per_merchant_standard_deviation
+    actual = @sa.average_invoices_per_merchant_standard_deviation
+    assert_equal 0.96, actual
+  end
+
+  def test_top_merchants_by_in_count
+    actual = @sa.top_merchants_by_invoice_count
+    assert_equal [1, 2, 3], actual
+  end
+
+  def test_bottom_merchants_by_invoice_count
+    actual = @sa.top_merchants_by_invoice_count
+    assert_equal [1, 2, 3], actual
+  end
+
+  def test_top_days_by_invoice_count
+    actual = @sa.top_days_by_invoice_count
+    assert_equal ["Monday"], actual
+  end
+
+  def test_top_days_returns_appropriate_hash
+  skip
+    actual = @sa.top_days
+    assert_equal ({}), actual
+  end
+
+  def test_it_returns_invoice_status_percentages
+    actual = @sa.invoice_status(:pending)
+    assert_equal 34.33, actual
+  end
 
   def test_best_item_for_merchant
     best_item = @sa.best_item_for_merchant(123_341_05)
