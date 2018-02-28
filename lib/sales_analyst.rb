@@ -101,4 +101,10 @@ class SalesAnalyst
       @se.items.find_by_id(result.item_id)
     end
   end
+
+  def merchants_with_only_one_item
+    @se.merchants.all.find_all do |merchant|
+      merchant.items.length == 1
+    end
+  end
 end

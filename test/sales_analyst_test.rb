@@ -85,4 +85,11 @@ class SalesAnalystTest < Minitest::Test
 
     assert_equal expected, @sa.quantities_sold(invoice_items)
   end
+
+  def test_merchants_with_one_item
+    merchants = @sa.merchants_with_only_one_item
+
+    assert_equal 123_341_12, merchants.first.id
+    assert_equal 1, merchants.length
+  end
 end

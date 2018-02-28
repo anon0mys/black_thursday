@@ -7,7 +7,7 @@ class MerchantRepository
   attr_reader :all
 
   def initialize(file_path, sales_engine)
-    @all = from_csv(file_path)
+    @all ||= from_csv(file_path)
     @sales_engine = sales_engine
   end
 
