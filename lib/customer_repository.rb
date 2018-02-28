@@ -6,7 +6,7 @@ class CustomerRepository
   attr_reader :all
 
   def initialize(file_path, sales_eng)
-    @all       = from_csv(file_path)
+    @all ||= from_csv(file_path)
     @sales_eng = sales_eng
   end
 
@@ -26,8 +26,8 @@ class CustomerRepository
     end
   end
 
-  def merchants(id)
-    @sales_eng.find_customer_merchants(id)
+  def merchants(customer_id)
+    @sales_eng.find_customer_merchants(customer_id)
   end
 
   def inspect

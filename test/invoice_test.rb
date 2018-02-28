@@ -4,11 +4,12 @@ require './lib/invoice'
 # Tests the invoice class
 class InvoiceTest < Minitest::Test
   def setup
-    invoice_repo = stub(
+    @invoice_repo = stub(
       merchant: mock('merchant'),
       customer: mock('customer'),
       items: [mock('item'), mock('item')],
-      transactions: [mock('trans'), mock('trans')]
+      transactions: [mock('trans'), mock('trans')],
+      invoice_items: [mock('inv_item'), mock('inv_item')]
     )
     @invoice = Invoice.new({
                              id: 6,
@@ -17,7 +18,7 @@ class InvoiceTest < Minitest::Test
                              status: 'pending',
                              created_at: '1969-07-20 20:17:40 - 0600',
                              updated_at: '1969-07-20 20:17:40 - 0600'
-                           }, invoice_repo)
+                           }, @invoice_repo)
   end
 
   def test_it_exists
@@ -43,7 +44,9 @@ class InvoiceTest < Minitest::Test
   end
 
   def test_it_asks_parent_for_merchant
-    assert_instance_of Mocha::Mock, @invoice.merchant
+    merchant = @invoice_repo.merchant
+
+    assert_equal merchant, @invoice.merchant
   end
 
   def test_it_asks_parent_for_customer
@@ -56,5 +59,66 @@ class InvoiceTest < Minitest::Test
 
   def test_it_asks_parent_for_transactions
     assert_instance_of Mocha::Mock, @invoice.transactions[0]
+  end
+
+  def test_it_asks_parent_for_invoice_items
+    invoice_items = @invoice_repo.invoice_items[0]
+
+    assert_equal invoice_items, @invoice.invoice_items[0]
+  end
+
+  def test_is_paid_in_full?
+    invoice_repo = stub(
+      transactions: [stub(result: 'fail'),
+                     stub(result: 'success')]
+    )
+    invoice = Invoice.new({
+                            id: 6,
+                            customer_id: 7,
+                            merchant_id: 8,
+                            status: 'pending',
+                            created_at: '1969-07-20 20:17:40 - 0600',
+                            updated_at: '1969-07-20 20:17:40 - 0600'
+                          }, invoice_repo)
+
+    assert invoice.is_paid_in_full?
+  end
+
+  def test_is_paid_in_full_false_when_no_success
+    invoice_repo = stub(
+      transactions: [stub(result: 'fail'),
+                     stub(result: 'fail')]
+    )
+    invoice = Invoice.new({
+                            id: 6,
+                            customer_id: 7,
+                            merchant_id: 8,
+                            status: 'pending',
+                            created_at: '1969-07-20 20:17:40 - 0600',
+                            updated_at: '1969-07-20 20:17:40 - 0600'
+                          }, invoice_repo)
+
+    refute invoice.is_paid_in_full?
+  end
+
+  def test_invoice_total
+    invoice_repo = stub(
+      invoice_items: [stub(unit_price: BigDecimal.new(1299) / 100,
+                           quantity: 2),
+                      stub(unit_price: BigDecimal.new(1899) / 100,
+                           quantity: 2)],
+      transactions: [stub(result: 'success')]
+    )
+    invoice = Invoice.new({
+                            id: 6,
+                            customer_id: 7,
+                            merchant_id: 8,
+                            status: 'pending',
+                            created_at: '1969-07-20 20:17:40 - 0600',
+                            updated_at: '1969-07-20 20:17:40 - 0600'
+                          }, invoice_repo)
+    expected = BigDecimal.new(6396) / 100
+
+    assert_equal expected, invoice.total
   end
 end

@@ -7,7 +7,7 @@ class InvoiceRepository
   attr_reader :all
 
   def initialize(file_path, sales_eng)
-    @all = from_csv(file_path)
+    @all ||= from_csv(file_path)
     @sales_eng = sales_eng
   end
 
@@ -37,6 +37,10 @@ class InvoiceRepository
 
   def transactions(invoice_id)
     @sales_eng.find_invoice_transactions(invoice_id)
+  end
+
+  def invoice_items(invoice_id)
+    @sales_eng.find_invoice_invoice_items(invoice_id)
   end
 
   def inspect

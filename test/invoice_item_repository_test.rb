@@ -12,8 +12,25 @@ class InvoiceItemRepositoryTest < Minitest::Test
   end
 
   def test_it_finds_by_item_id
-    assert_instance_of Array, @invoice_item_repo.find_all_by_item_id(10)
-    assert_equal 0, @invoice_item_repo.find_all_by_item_id(10).length
-    assert_equal 1, @invoice_item_repo.find_all_by_item_id(263454779).length
+    actual  = @invoice_item_repo.find_all_by_item_id(4)
+    actual2 = @invoice_item_repo.find_all_by_item_id(10)
+
+    assert_instance_of Array, actual
+    assert_equal 0, actual.length
+    assert_equal 1, actual2.length
+  end
+
+  def test_it_finds_by_invoice_id
+    actual  = @invoice_item_repo.find_all_by_invoice_id(4)
+    actual2 = @invoice_item_repo.find_all_by_invoice_id(2)
+
+    assert_instance_of Array, actual
+    assert_equal 0, actual.length
+    assert_equal 2, actual2.length
+  end
+
+  def test_inspect
+    expected = '#<InvoiceItemRepository 4 rows>'
+    assert_equal expected, @invoice_item_repo.inspect
   end
 end

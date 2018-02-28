@@ -19,18 +19,35 @@ class Invoice
   end
 
   def merchant
-    @parent.merchant(@merchant_id)
+    @merchants ||= @parent.merchant(@merchant_id)
   end
 
   def customer
-    @parent.customer(@customer_id)
+    @customers ||= @parent.customer(@customer_id)
   end
 
   def items
-    @parent.items(@id)
+    @items ||= @parent.items(@id)
   end
 
   def transactions
-    @parent.transactions(@id)
+    @transactions ||= @parent.transactions(@id)
+  end
+
+  def invoice_items
+    @invoice_items ||= @parent.invoice_items(@id)
+  end
+
+  def is_paid_in_full?
+    success = transactions.find { |trans| trans.result == 'success' }
+    !success.nil?
+  end
+
+  def total
+    return 0 unless is_paid_in_full?
+    invoice_items.reduce(0) do |sum, item|
+      sum += (item.unit_price * item.quantity)
+      sum
+    end
   end
 end

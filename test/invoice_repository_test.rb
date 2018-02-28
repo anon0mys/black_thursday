@@ -6,13 +6,14 @@ require './lib/searching'
 class InvoiceRepositoryTest < Minitest::Test
   def setup
     file_name = './data/sample_data/invoices.csv'
-    sales_eng = stub(
+    @sales_eng = stub(
       find_invoice_merchant: mock('merchant'),
       find_invoice_items: [mock('item'), mock('item')],
       find_invoice_customer: mock('customer'),
-      find_invoice_transactions: [mock, mock]
+      find_invoice_transactions: [mock, mock],
+      find_invoice_invoice_items: [mock, mock]
     )
-    @invoice_repo = InvoiceRepository.new(file_name, sales_eng)
+    @invoice_repo = InvoiceRepository.new(file_name, @sales_eng)
   end
 
   def test_it_exists
@@ -59,6 +60,12 @@ class InvoiceRepositoryTest < Minitest::Test
 
   def test_it_asks_parent_for_transactions
     assert_instance_of Mocha::Mock, @invoice_repo.transactions('id')[0]
+  end
+
+  def test_it_asks_parent_for_invoice_items
+    invoice_item = @sales_eng.find_invoice_invoice_items[0]
+
+    assert_equal invoice_item, @invoice_repo.invoice_items('id')[0]
   end
 
   def test_inspect

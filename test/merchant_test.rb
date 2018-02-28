@@ -11,7 +11,9 @@ class MerchantTest < Minitest::Test
     )
     @merchant = Merchant.new({
                                id: 5,
-                               name: 'Turing School'
+                               name: 'Turing School',
+                               created_at: '2009-02-07',
+                               updated_at: '2009-02-07'
                              }, mock_repo)
   end
 
@@ -19,16 +21,21 @@ class MerchantTest < Minitest::Test
     assert_instance_of Merchant, @merchant
   end
 
-  def test_id_and_name
+  def test_attributes
+    expected = Time.parse('2009-02-07')
     assert_equal 5, @merchant.id
     assert_equal 'Turing School', @merchant.name
+    assert_equal expected, @merchant.created_at
+    assert_equal expected, @merchant.updated_at
   end
 
   def test_other_attributes
     mock_repo = stub(name: 'Merchant Repo')
     merchant  = Merchant.new({
                                id: 1,
-                               name: 'Haliburton'
+                               name: 'Haliburton',
+                               created_at: '2009-02-07',
+                               updated_at: '2009-02-07'
                              }, mock_repo)
 
     assert_equal 1, merchant.id
