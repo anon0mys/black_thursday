@@ -21,6 +21,6 @@ class Transaction
   end
 
   def invoice
-    @parent.invoice(@invoice_id)
+    @invoices ||= @parent.invoice(@invoice_id)
   end
 end

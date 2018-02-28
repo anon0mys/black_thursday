@@ -17,6 +17,6 @@ class Customer
   end
 
   def merchants
-    @parent.merchants(@id)
+    @merchants ||= @parent.merchants(@id)
   end
 end

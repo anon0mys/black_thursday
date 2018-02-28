@@ -28,6 +28,6 @@ class Item
   end
 
   def merchant
-    @parent.merchant(@merchant_id)
+    @merchants ||= @parent.merchant(@merchant_id)
   end
 end
