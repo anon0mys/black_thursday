@@ -110,4 +110,8 @@ class SalesAnalystTest < Minitest::Test
     assert @sa.check_invoices(invoices, 'January')
     refute @sa.check_invoices(invoices, 'December')
   end
+
+  def test_revenue_by_merchant
+    assert_equal 59.95, @sa.revenue_by_merchant(123_341_05)
+  end
 end

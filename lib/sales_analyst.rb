@@ -125,4 +125,11 @@ class SalesAnalyst
     end
     invoices.length == 1
   end
+
+  def revenue_by_merchant(merchant_id)
+    invoices = @se.find_merchant_invoices(merchant_id)
+    invoice_items = invoice_item_builder(invoices)
+    totals = revenue_totals(invoice_items).values
+    totals.reduce(&:+)
+  end
 end
