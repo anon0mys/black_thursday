@@ -71,14 +71,14 @@ class SalesAnalyst
   end
 
   def invoice_revenue_builder(invoices)
-    invoices.reduce([]) do |results, invoice|
+    invoices.each_with_object([]) do |invoice, results|
       results << invoice.invoice_items if invoice.is_paid_in_full?
       results
     end.flatten
   end
 
   def revenue_totals(invoice_items)
-    invoice_items.reduce({}) do |results, invoice_item|
+    invoice_items.each_with_object({}) do |invoice_item, results|
       results[invoice_item] = invoice_item.unit_price * invoice_item.quantity
       results
     end
