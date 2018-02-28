@@ -65,10 +65,7 @@ class SalesAnalyst
   def best_item_for_merchant(merchant_id)
     invoices = @se.find_merchant_invoices(merchant_id)
     invoice_items = invoice_revenue_builder(invoices)
-    revenue_totals = invoice_items.reduce({}) do |results, invoice_item|
-      results[invoice_item] = invoice_item.unit_price * invoice_item.quantity
-      results
-    end
+    revenue_totals = revenue_totals(invoice_items)
     max_item = revenue_totals.max_by { |_item, total| total }
     @se.items.find_by_id(max_item[0].item_id)
   end
@@ -78,5 +75,12 @@ class SalesAnalyst
       results << invoice.invoice_items if invoice.is_paid_in_full?
       results
     end.flatten
+  end
+
+  def revenue_totals(invoice_items)
+    invoice_items.reduce({}) do |results, invoice_item|
+      results[invoice_item] = invoice_item.unit_price * invoice_item.quantity
+      results
+    end
   end
 end

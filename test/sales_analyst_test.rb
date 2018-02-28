@@ -60,4 +60,14 @@ class SalesAnalystTest < Minitest::Test
 
     assert_instance_of InvoiceItem, actual[0]
   end
+
+  def test_revenue_totals
+    invoice_item_one = stub(unit_price: 5, quantity: 2)
+    invoice_item_two = stub(unit_price: 2, quantity: 2)
+    invoice_items = [invoice_item_one, invoice_item_two]
+    expected = { invoice_item_one => 10,
+                 invoice_item_two => 4 }
+
+    assert_equal expected, @sa.revenue_totals(invoice_items)
+  end
 end
