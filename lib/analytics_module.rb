@@ -16,4 +16,10 @@ module Analytics
     return 0 if elements == []
     (elements.reduce(:+) / elements.length).round(2)
   end
+
+  def sigma(elements, number_of_sigmas)
+    average = average(elements)
+    st_dev = standard_deviation(elements, average)
+    average + (number_of_sigmas * st_dev)
+  end
 end

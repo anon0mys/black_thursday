@@ -10,7 +10,7 @@ class SalesAnalyst
   end
 
   def average_items_per_merchant
-    average(items_for_each_merchant)
+    @average ||= average(items_for_each_merchant)
   end
 
   def items_for_each_merchant
@@ -25,11 +25,8 @@ class SalesAnalyst
   end
 
   def merchants_with_high_item_count
-    average = average_items_per_merchant
-    st_dev = average_items_per_merchant_standard_deviation
-    one_sigma = average + st_dev
     @se.merchants.all.find_all do |merchant|
-      merchant.items.length > one_sigma
+      merchant.items.length > sigma(invoices_for_each_merchant, 1)
     end
   end
 
@@ -54,11 +51,8 @@ class SalesAnalyst
   end
 
   def golden_items
-    average = average(all_item_prices)
-    st_dev = standard_deviation(all_item_prices, average)
-    two_sigma = average + (2 * st_dev)
     @se.items.all.find_all do |item|
-      item.unit_price > two_sigma
+      item.unit_price > sigma(all_item_prices, 2)
     end
   end
 
@@ -78,35 +72,21 @@ class SalesAnalyst
   end
 
   def top_merchants_by_invoice_count
-    merchants = @se.merchants.all
-    avg_invc = average_invoices_per_merchant
-    st_dev = average_invoices_per_merchant_standard_deviation
-    two_sigma = avg_invc + (2 * st_dev)
-    top_merchants = []
-    merchants.find_all do |merchant|
-      if merchant.invoices.length > two_sigma
-        top_merchants << merchant.id
-      end
+    @se.merchants.all.find_all do |merchant|
+      merchant.invoices.length > sigma(invoices_for_each_merchant, 2)
     end
   end
 
   def bottom_merchants_by_invoice_count
-    merchants = @se.merchants.all
-    avg_invc = average_invoices_per_merchant
-    st_dev = average_invoices_per_merchant_standard_deviation
-    two_sigma = avg_invc - (2 * st_dev)
-    top_merchants = []
-    merchants.find_all do |merchant|
-      if merchant.invoices.length < two_sigma
-        top_merchants << merchant.id
-      end
+    @se.merchants.all.find_all do |merchant|
+      merchant.invoices.length < sigma(invoices_for_each_merchant, -2)
     end
   end
 
   def top_days_by_invoice_count
     invoices = @se.invoices.all
     top_days = invoices.reduce({}) do |results, invoice|
-	     day = invoice.created_at.strftime("%A")
+	     day = invoice.created_at.strftime('%A')
        results[day] = 0 if results[day].nil?
 	     results[day] += 1
 	     results
@@ -114,7 +94,7 @@ class SalesAnalyst
     avg_by_day = average(top_days.values)
     std_by_day = standard_deviation(top_days.values, avg_by_day)
     sigma = std_by_day + avg_by_day
-    shit = top_days.map do |day, revenue|
+    top_days.map do |day, revenue|
       day if revenue > sigma
     end.compact
   end
