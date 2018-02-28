@@ -92,4 +92,22 @@ class SalesAnalystTest < Minitest::Test
     assert_equal 123_341_12, merchants.first.id
     assert_equal 1, merchants.length
   end
+
+  def test_merchants_sell_one_item_in_first_month
+    month = 'February'
+    merchants = @sa.merchants_with_only_one_item_registered_in_month(month)
+
+    assert_equal 123_341_12, merchants.first.id
+    assert_equal 1, merchants.length
+  end
+
+  def test_check_invoices
+    invoice_one = stub(created_at: Time.parse('2018-02-01'))
+    invoice_two = stub(created_at: Time.parse('2018-01-01'))
+    invoices = [invoice_one, invoice_two]
+
+    assert @sa.check_invoices(invoices, 'February')
+    assert @sa.check_invoices(invoices, 'January')
+    refute @sa.check_invoices(invoices, 'December')
+  end
 end

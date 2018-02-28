@@ -23,11 +23,11 @@ class InvoiceItemRepositoryTest < Minitest::Test
 
   def test_it_finds_by_invoice_id
     actual  = @invoice_item_repo.find_all_by_invoice_id(4)
-    actual2 = @invoice_item_repo.find_all_by_invoice_id(1)
+    actual2 = @invoice_item_repo.find_all_by_invoice_id(2)
 
     assert_instance_of Array, actual
     assert_equal 0, actual.length
-    assert_equal 3, actual2.length
+    assert_equal 2, actual2.length
   end
 
   def test_inspect

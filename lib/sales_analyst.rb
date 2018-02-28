@@ -103,8 +103,26 @@ class SalesAnalyst
   end
 
   def merchants_with_only_one_item
-    @se.merchants.all.find_all do |merchant|
+    @one_item ||= @se.merchants.all.find_all do |merchant|
       merchant.items.length == 1
     end
+  end
+
+  def merchants_with_only_one_item_registered_in_month(month)
+    merchants = @se.merchants.all.find_all do |merchant|
+      merchant.created_at.strftime('%B') == month
+    end
+    merchants.reduce([]) do |results, merchant|
+      criteria = check_invoices(merchant.invoices, month)
+      results << merchant if criteria
+      results
+    end
+  end
+
+  def check_invoices(invoices, month)
+    invoices = invoices.find_all do |invoice|
+      invoice.created_at.strftime('%B') == month
+    end
+    invoices.length == 1
   end
 end
