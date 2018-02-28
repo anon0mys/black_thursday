@@ -64,13 +64,13 @@ class SalesAnalyst
 
   def best_item_for_merchant(merchant_id)
     invoices = @se.find_merchant_invoices(merchant_id)
-    invoice_items = invoice_revenue_builder(invoices)
-    revenue_totals = revenue_totals(invoice_items)
-    max_item = revenue_totals.max_by { |_item, total| total }
-    @se.items.find_by_id(max_item[0].item_id)
+    invoice_items = invoice_item_builder(invoices)
+    totals = revenue_totals(invoice_items)
+    max = totals.max_by { |_item, total| total }
+    @se.items.find_by_id(max[0].item_id)
   end
 
-  def invoice_revenue_builder(invoices)
+  def invoice_item_builder(invoices)
     invoices.each_with_object([]) do |invoice, results|
       results << invoice.invoice_items if invoice.is_paid_in_full?
       results
@@ -81,6 +81,24 @@ class SalesAnalyst
     invoice_items.each_with_object({}) do |invoice_item, results|
       results[invoice_item] = invoice_item.unit_price * invoice_item.quantity
       results
+    end
+  end
+
+  def quantities_sold(invoice_items)
+    invoice_items.each_with_object({}) do |invoice_item, results|
+      results[invoice_item] = invoice_item.quantity
+      results
+    end
+  end
+
+  def most_sold_item_for_merchant(merchant_id)
+    invoices = @se.find_merchant_invoices(merchant_id)
+    invoice_items = invoice_item_builder(invoices)
+    quantities = quantities_sold(invoice_items)
+    max_count = quantities.values.max
+    results = quantities.find_all { |_item, total| total == max_count}
+    results.to_h.keys.map do |result|
+      @se.items.find_by_id(result.item_id)
     end
   end
 end
