@@ -125,9 +125,38 @@ class SalesAnalyst
   def top_revenue_earners(length = 20)
     totals = @se.merchants.all.reduce({}) do |result, merchant|
       revenue = revenue_by_merchant(merchant.id)
-      result[merchant] = revenue unless revenue.nil?
+      revenue = 0 if revenue.nil?
+      result[merchant] = revenue
       result
     end
     totals.max_by(length) { |_merchant, revenue| revenue }.to_h.keys
+  end
+
+  def total_revenue_by_date(date)
+    invoices = @se.invoices.all.find_all do |invoice|
+      invoice.created_at == date
+    end
+    invoices.reduce(0) do |sum, invoice|
+      sum += revenue_totals(invoice.invoice_items).values.reduce(:+)
+      sum
+    end
+  end
+
+  def merchants_ranked_by_revenue
+    top_revenue_earners(@se.merchants.all.length)
+  end
+
+  def merchants_with_pending_invoices
+    @se.merchants.all.reduce([]) do |pending, merchant|
+      pending << merchant if pending_invoices?(merchant.invoices)
+      pending
+    end
+  end
+
+  def pending_invoices?(invoices)
+    pending = invoices.reject do |invoice|
+      invoice.is_paid_in_full?
+    end
+    !pending.empty?
   end
 end
