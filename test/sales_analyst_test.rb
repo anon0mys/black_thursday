@@ -48,4 +48,26 @@ class SalesAnalystTest < Minitest::Test
     golden_items = @sa.golden_items
     assert_equal 'Some stuff', golden_items.first.name
   end
+
+  def test_best_item_for_merchant
+    best_item = @sa.best_item_for_merchant(123_341_05)
+    assert_equal 'Garbage', best_item.name
+  end
+
+  def test_invoice_revenue_builder
+    invoices = @sa.se.find_merchant_invoices(123_341_05)
+    actual = @sa.invoice_revenue_builder(invoices)
+
+    assert_instance_of InvoiceItem, actual[0]
+  end
+
+  def test_revenue_totals
+    invoice_item_one = stub(unit_price: 5, quantity: 2)
+    invoice_item_two = stub(unit_price: 2, quantity: 2)
+    invoice_items = [invoice_item_one, invoice_item_two]
+    expected = { invoice_item_one => 10,
+                 invoice_item_two => 4 }
+
+    assert_equal expected, @sa.revenue_totals(invoice_items)
+  end
 end
