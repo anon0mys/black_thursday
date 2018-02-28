@@ -11,14 +11,14 @@ class Merchant
   end
 
   def items
-    @parent.items(@id)
+    @items ||= @parent.items(@id)
   end
 
   def invoices
-    @parent.invoices(@id)
+    @invoices ||= @parent.invoices(@id)
   end
 
   def customers
-    @parent.customers(@id)
+    @customers ||= @parent.customers(@id)
   end
 end
