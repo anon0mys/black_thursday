@@ -3,6 +3,7 @@ require_relative 'analytics_module'
 # Business metadata calculator
 class SalesAnalyst
   include Analytics
+  attr_reader :se
 
   def initialize(sales_eng)
     @se = sales_eng
@@ -49,7 +50,7 @@ class SalesAnalyst
   end
 
   def all_item_prices
-    @se.items.all.map(&:unit_price)
+    @item_prices ||= @se.items.all.map(&:unit_price)
   end
 
   def golden_items
@@ -59,5 +60,23 @@ class SalesAnalyst
     @se.items.all.find_all do |item|
       item.unit_price > two_sigma
     end
+  end
+
+  def best_item_for_merchant(merchant_id)
+    invoices = @se.find_merchant_invoices(merchant_id)
+    invoice_items = invoice_revenue_builder(invoices)
+    revenue_totals = invoice_items.reduce({}) do |results, invoice_item|
+      results[invoice_item] = invoice_item.unit_price * invoice_item.quantity
+      results
+    end
+    max_item = revenue_totals.max_by { |_item, total| total }
+    @se.items.find_by_id(max_item[0].item_id)
+  end
+
+  def invoice_revenue_builder(invoices)
+    invoices.reduce([]) do |results, invoice|
+      results << invoice.invoice_items if invoice.is_paid_in_full?
+      results
+    end.flatten
   end
 end
