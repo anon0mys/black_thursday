@@ -54,9 +54,9 @@ class SalesAnalystTest < Minitest::Test
     assert_equal 'Garbage', best_item.name
   end
 
-  def test_invoice_revenue_builder
+  def test_invoice_item_builder
     invoices = @sa.se.find_merchant_invoices(123_341_05)
-    actual = @sa.invoice_revenue_builder(invoices)
+    actual = @sa.invoice_item_builder(invoices)
 
     assert_instance_of InvoiceItem, actual[0]
   end
@@ -69,5 +69,46 @@ class SalesAnalystTest < Minitest::Test
                  invoice_item_two => 4 }
 
     assert_equal expected, @sa.revenue_totals(invoice_items)
+  end
+
+  def test_most_sold_item
+    most_sold_item = @sa.most_sold_item_for_merchant(123_341_05)
+    assert_equal 'Garbage', most_sold_item[0].name
+  end
+
+  def test_quantities_sold
+    invoice_item_one = stub(unit_price: 5, quantity: 2)
+    invoice_item_two = stub(unit_price: 2, quantity: 2)
+    invoice_items = [invoice_item_one, invoice_item_two]
+    expected = { invoice_item_one => 2,
+                 invoice_item_two => 2 }
+
+    assert_equal expected, @sa.quantities_sold(invoice_items)
+  end
+
+  def test_merchants_with_one_item
+    merchants = @sa.merchants_with_only_one_item
+
+    assert_equal 123_341_12, merchants.first.id
+    assert_equal 1, merchants.length
+  end
+
+  def test_merchants_sell_one_item_in_first_month
+    month = 'February'
+    merchants = @sa.merchants_with_only_one_item_registered_in_month(month)
+
+    assert_equal 123_341_12, merchants.first.id
+    assert_equal 1, merchants.length
+  end
+
+  def test_revenue_by_merchant
+    assert_equal 59.95, @sa.revenue_by_merchant(123_341_05)
+  end
+
+  def test_top_revenue_earners
+    top_earners = @sa.top_revenue_earners
+
+    assert_instance_of Merchant, top_earners[0]
+    assert_equal 123_341_05, top_earners[0].id
   end
 end
