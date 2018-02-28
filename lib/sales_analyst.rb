@@ -86,16 +86,13 @@ class SalesAnalyst
   def top_days_by_invoice_count
     invoices = @se.invoices.all
     top_days = invoices.reduce({}) do |results, invoice|
-	     day = invoice.created_at.strftime('%A')
-       results[day] = 0 if results[day].nil?
-	     results[day] += 1
-	     results
+      day = invoice.created_at.strftime('%A')
+      results[day] = 0 if results[day].nil?
+      results[day] += 1
+      results
     end
-    avg_by_day = average(top_days.values)
-    std_by_day = standard_deviation(top_days.values, avg_by_day)
-    sigma = std_by_day + avg_by_day
     top_days.map do |day, revenue|
-      day if revenue > sigma
+      day if revenue > sigma(top_days.values, 1)
     end.compact
   end
 
