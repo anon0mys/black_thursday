@@ -26,7 +26,7 @@ class SalesAnalyst
 
   def merchants_with_high_item_count
     @se.merchants.all.find_all do |merchant|
-      merchant.items.length > sigma(invoices_for_each_merchant, 1)
+      merchant.items.length > sigma(items_for_each_merchant, 1)
     end
   end
 
