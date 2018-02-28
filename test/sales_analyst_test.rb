@@ -31,7 +31,7 @@ class SalesAnalystTest < Minitest::Test
 
   def test_merchants_with_high_item_count
     actual = @sa.merchants_with_high_item_count.first.name
-    assert_equal 'MiniatureBikez', actual
+    assert_equal 'Shopin1901', actual
   end
 
   def test_average_item_price_for_merchant
@@ -48,24 +48,33 @@ class SalesAnalystTest < Minitest::Test
     golden_items = @sa.golden_items
     assert_equal 'Some stuff', golden_items.first.name
   end
-  
+
   def test_it_finds_invoices_for_each_merchant
-    assert_equal [2.0, 0.0, 0.0, 1.0], @sa.invoices_for_each_merchant
+    assert_equal [2.0, 1.0, 0.0, 1.0], @sa.invoices_for_each_merchant
   end
 
   def test_average_invoices_per_merchant
     actual = @sa.average_invoices_per_merchant
-    assert_equal 0.75, actual
+    assert_equal 1.0, actual
   end
 
   def test_average_invoices_per_merchant_standard_deviation
     actual = @sa.average_invoices_per_merchant_standard_deviation
-    assert_equal 0.96, actual
+    assert_equal 0.82, actual
   end
 
-  def test_top_merchants_by_in_count
-    actual = @sa.top_merchants_by_invoice_count
-    assert_equal [1, 2, 3], actual
+  def test_top_merchants_by_invoice_count
+    merch_one = stub(invoices: [1, 2])
+    merch_two = stub(invoices: [1])
+    merch_three = stub(invoices: [1, 2, 3, 4, 5, 6, 7, 8, 9])
+    merch_arr = [merch_one, merch_two, merch_three]
+    sa = stub(top_merchants_by_invoice_count:
+              stub(se:
+                   stub(merchants:
+                        stub(all: merch_arr))))
+    actual = sa.top_merchants_by_invoice_count
+
+    assert merch_three == actual
   end
 
   def test_bottom_merchants_by_invoice_count
@@ -75,18 +84,12 @@ class SalesAnalystTest < Minitest::Test
 
   def test_top_days_by_invoice_count
     actual = @sa.top_days_by_invoice_count
-    assert_equal ["Monday"], actual
-  end
-
-  def test_top_days_returns_appropriate_hash
-  skip
-    actual = @sa.top_days
-    assert_equal ({}), actual
+    assert_equal ['Saturday'], actual
   end
 
   def test_it_returns_invoice_status_percentages
     actual = @sa.invoice_status(:pending)
-    assert_equal 34.33, actual
+    assert_equal 50, actual
   end
 
   def test_best_item_for_merchant

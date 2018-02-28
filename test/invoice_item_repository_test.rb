@@ -4,7 +4,8 @@ require './lib/invoice_item_repository'
 class InvoiceItemRepositoryTest < Minitest::Test
   def setup
     file_name = './data/sample_data/invoice_items.csv'
-    @invoice_item_repo = InvoiceItemRepository.new(file_name)
+    sales_eng = mock
+    @invoice_item_repo = InvoiceItemRepository.new(file_name, sales_eng)
   end
 
   def test_it_exists
