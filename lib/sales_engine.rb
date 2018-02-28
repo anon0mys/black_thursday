@@ -55,6 +55,10 @@ class SalesEngine
     @invoices.find_by_id(invoice_id)
   end
 
+  def find_invoice_invoice_items(invoice_id)
+    @invoice_items.find_all_by_invoice_id(invoice_id)
+  end
+
   def find_invoice_items(invoice_id)
     @invoice_items.find_all_by_invoice_id(invoice_id).map do |inv_item|
       @items.find_by_id(inv_item.item_id)
