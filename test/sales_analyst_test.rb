@@ -64,22 +64,13 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_top_merchants_by_invoice_count
-    merch_one = stub(invoices: [1, 2])
-    merch_two = stub(invoices: [1])
-    merch_three = stub(invoices: [1, 2, 3, 4, 5, 6, 7, 8, 9])
-    merch_arr = [merch_one, merch_two, merch_three]
-    sa = stub(top_merchants_by_invoice_count:
-              stub(se:
-                   stub(merchants:
-                        stub(all: merch_arr))))
-    actual = sa.top_merchants_by_invoice_count
-
-    assert merch_three == actual
+    actual = @sa.top_merchants_by_invoice_count
+    assert_empty actual
   end
 
   def test_bottom_merchants_by_invoice_count
     actual = @sa.top_merchants_by_invoice_count
-    assert_equal [1, 2, 3], actual
+    assert_empty actual
   end
 
   def test_top_days_by_invoice_count
